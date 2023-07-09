@@ -1,15 +1,16 @@
 package com.example.springbatchlearn.config;
 
-import com.example.springbatchlearn.tasklet.HelloWorldTasklet;
-import com.example.springbatchlearn.chunk.HelloWorldReader;
-import com.example.springbatchlearn.chunk.HelloWorldProcessor;
-import com.example.springbatchlearn.chunk.HelloWorldWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,38 +18,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BatchConfig {
 
-    private final JobBuilderFactory jobBuilderFactory;
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
 
-    private final StepBuilderFactory stepBuilderFactory;
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
 
-    private final HelloWorldTasklet helloWorldTasklet;
+    @Autowired
+    private Tasklet helloWorldTasklet;
     
-    private final HelloWorldReader helloWorldReader;
+    @Autowired
+    private ItemReader helloWorldReader;
     
-    private final HelloWorldProcessor helloWorldProcessor;
+    @Autowired
+    private ItemProcessor helloWorldProcessor;
     
-    private final HelloWorldWriter helloWorldWriter;
-
-    public BatchConfig(JobBuilderFactory jobBuilderFactory,
-                       StepBuilderFactory stepBuilderFactory,
-                       HelloWorldTasklet helloWorldTasklet,
-                       HelloWorldReader helloWorldReader,
-                       HelloWorldProcessor helloWorldProcessor,
-                       HelloWorldWriter helloWorldWriter
-                       ) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-        this.helloWorldTasklet = helloWorldTasklet;
-        this.helloWorldReader = helloWorldReader;
-        this.helloWorldProcessor = helloWorldProcessor;
-        this.helloWorldWriter = helloWorldWriter;
-    }
+    @Autowired
+    private ItemWriter helloWorldWriter;
 
     @Bean
-    public Job helloWorldJob(Step helloWorldChunkStep) {
+    public Job helloWorldJob() {
         return jobBuilderFactory.get("helloWorldJob")
-                .flow(helloWorldChunkStep)
-                .end()
+                .incrementer(new RunIdIncrementer())
+                .start(helloWorldChunkStep())
                 .build();
     }
 
@@ -62,7 +54,7 @@ public class BatchConfig {
     @Bean
     public Step helloWorldChunkStep() {
         return stepBuilderFactory.get("helloWorldChunkStep")
-                .<String, String>chunk(3)   // チャンクの設定、括弧内はコミット間隔
+                .<String, String>chunk(1)   // チャンクの設定、括弧内はコミット間隔
                 .reader(helloWorldReader)
                 .processor(helloWorldProcessor)
                 .writer(helloWorldWriter)
