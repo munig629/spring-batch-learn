@@ -1,8 +1,8 @@
 spring:
   batch:
     job:
-      names: sample02Job
-      # enabled: false
+      # names: sample02Job
+      enabled: false  
   datasource:
     url: "jdbc:h2:mem:test"
     username: sa
