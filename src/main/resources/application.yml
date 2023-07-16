@@ -1,7 +1,8 @@
 spring:
   batch:
     job:
-      names: helloWorldJob
+      names: sample02Job
+      # enabled: false
   datasource:
     url: "jdbc:h2:mem:test"
     username: sa
@@ -10,3 +11,4 @@ spring:
   h2:
     console:
       enabled: true
+      # http://localhost:8080/h2-console
