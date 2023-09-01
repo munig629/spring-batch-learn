@@ -1,7 +1,7 @@
 spring:
   batch:
     job:
-      names: sample02Job
+      names: sample03Job
       # enabled: false  
   datasource:
     url: "jdbc:h2:mem:test"
@@ -12,3 +12,7 @@ spring:
     console:
       enabled: true
       # http://localhost:8080/h2-console
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
