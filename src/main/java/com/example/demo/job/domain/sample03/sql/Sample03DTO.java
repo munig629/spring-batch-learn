@@ -12,18 +12,18 @@ public class Sample03DTO {
     private String name;
 
     /** 生年月日_年 */
-    private int birthY;
+    private int birth_year;
 
     /** 生年月日_月 */
-    private int birthM;
+    private int birth_month;
 
     /** 生年月日_日 */
-    private int birthD;
+    private int birth_day;
 
     /** 性別 */
     private String sex;
 
-    /** 性別(文字列) */
-    private String sex_value;
+    /** 備考 */
+    private String memo;
 
 }

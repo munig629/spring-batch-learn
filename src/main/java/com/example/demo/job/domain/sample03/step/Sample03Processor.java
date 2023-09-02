@@ -17,6 +17,12 @@ public class Sample03Processor extends BatchItemProcessorBase<Sample03DTO, Sampl
         if("1".equals(item.getSex())){
             item.setName(item.getName() + "◆");
         }
+
+        // // 9件目の処理でエラーを発生させてみる
+        // if(item.getId() == 9){
+        //     throw new Exception();
+        // }
+
         System.out.println("Processor:" + item.toString());
         
         return item;
