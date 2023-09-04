@@ -71,6 +71,7 @@ public class Sample03Configuration {
                 .resource(new FileSystemResource("src\\main\\resources\\com\\example\\demo\\job\\domain\\sample03\\data\\Sample03Out"))
                 .encoding(StandardCharsets.UTF_8.name())
                 .lineAggregator(aggregator)
+                .append(true)   // true：追記、false：新規作成
                 .build();
     }
 
