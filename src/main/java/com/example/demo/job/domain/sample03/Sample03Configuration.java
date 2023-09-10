@@ -3,6 +3,7 @@ package com.example.demo.job.domain.sample03;
 import java.nio.charset.StandardCharsets;
 
 import com.example.demo.job.domain.sample03.step.Sample03Processor;
+import com.example.demo.job.domain.sample03.step.Sample03Tasklet;
 import com.example.demo.job.domain.sample03.sql.Sample03DTO;
 
 import org.springframework.batch.core.Job;
@@ -36,6 +37,8 @@ public class Sample03Configuration {
 
     private final StepBuilderFactory stepBuilderFactory;
     
+    private final Sample03Tasklet sample03Tasklet;
+
     private final Sample03Processor sample03Processor;
 
     @Bean
@@ -71,7 +74,8 @@ public class Sample03Configuration {
                 .resource(new FileSystemResource("src\\main\\resources\\com\\example\\demo\\job\\domain\\sample03\\data\\Sample03Out"))
                 .encoding(StandardCharsets.UTF_8.name())
                 .lineAggregator(aggregator)
-                .append(true)   // true：追記、false：新規作成
+                .transactional(false)
+                .append(false)   // true：追記、false：新規作成
                 .build();
     }
 
@@ -90,6 +94,13 @@ public class Sample03Configuration {
         return jobBuilderFactory.get("sample03Job")
                 .flow(sample03ChunkStep)
                 .end()
+                .build();
+    }
+
+    @Bean
+    public Step sample0TaskletStep() {
+        return stepBuilderFactory.get("sample03TaskletStep")
+                .tasklet(sample03Tasklet)
                 .build();
     }
 
