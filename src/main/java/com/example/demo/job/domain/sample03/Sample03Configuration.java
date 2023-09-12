@@ -19,6 +19,7 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
+import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.FormatterLineAggregator;
 import org.springframework.batch.item.file.transform.LineAggregator;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +49,7 @@ public class Sample03Configuration {
                 .resource(new ClassPathResource("com\\example\\demo\\job\\domain\\sample03\\data\\Sample03.csv"))
                 .linesToSkip(1)   // ヘッダーをスキップ
                 .encoding(StandardCharsets.UTF_8.name())
-                .delimited()
+                .delimited().delimiter("|")   // 任意の区切り文字を指定可能（デフォルト：","）
                 .names(new String[] {"id", "name", "birth_year", "birth_month", "birth_day", "sex", "memo"})
                 .fieldSetMapper(new BeanWrapperFieldSetMapper<Sample03DTO>(){
                     {
@@ -60,20 +61,30 @@ public class Sample03Configuration {
 
     @Bean
     public FlatFileItemWriter<Sample03DTO> sample03FlatFileItemWriter() {
-        // 固定長ファイルを扱うので「FormatterLineAggregator」を利用
-        FormatterLineAggregator<Sample03DTO> aggregator = new FormatterLineAggregator<Sample03DTO>();
+        // // 固定長ファイルを扱うので「FormatterLineAggregator」を利用
+        // FormatterLineAggregator<Sample03DTO> formatterLineAggregator = new FormatterLineAggregator<Sample03DTO>();
+        // オブジェクトを文字列の区切られたリストに変換する LineAggregator 実装
+        DelimitedLineAggregator<Sample03DTO> delimitedLineAggregator = new DelimitedLineAggregator<Sample03DTO>();
+        
         // フィールドの設定をしたいので、「BeanWrapperFieldExtractor」で実装
         BeanWrapperFieldExtractor<Sample03DTO> extractor = new BeanWrapperFieldExtractor<Sample03DTO>();
         extractor.setNames(new String[] {"id", "name", "birth_year", "birth_month", "birth_day", "sex", "memo"});
-        aggregator.setFieldExtractor(extractor);
-        // String.formatの形式で固定長を取り扱う
-        aggregator.setFormat("%6s%-10s%05d%5s");
+        // formatterLineAggregator.setFieldExtractor(extractor);
+        delimitedLineAggregator.setFieldExtractor(extractor);
+        
+        // // String.formatの形式で固定長を取り扱う
+        // formatterLineAggregator.setFormat("%6s%-10s%05d%5s");;
+
+        // 任意の区切り文字を指定可能（デフォルト：","）
+        delimitedLineAggregator.setDelimiter("|");
 
         return new FlatFileItemWriterBuilder<Sample03DTO>()
                 .name("userCsvWriter")
-                .resource(new FileSystemResource("src\\main\\resources\\com\\example\\demo\\job\\domain\\sample03\\data\\Sample03Out"))
+                // データファイルの拡張子であれば制限はなさそう
+                .resource(new FileSystemResource("src\\main\\resources\\com\\example\\demo\\job\\domain\\sample03\\data\\Sample03Out.txt"))
                 .encoding(StandardCharsets.UTF_8.name())
-                .lineAggregator(aggregator)
+                // .lineAggregator(formatterLineAggregator)
+                .lineAggregator(delimitedLineAggregator)
                 .transactional(false)
                 .append(false)   // true：追記、false：新規作成
                 .build();
