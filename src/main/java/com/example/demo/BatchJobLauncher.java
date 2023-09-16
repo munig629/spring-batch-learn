@@ -4,16 +4,13 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @EnableBatchProcessing
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = { "batch" }, havingValue = "my-batch")
+@ConditionalOnProperty(value = { "batch" }, havingValue = "my-batch")   // CommandLineRunnerのユニットテストを実行する際はコメントアウト
 public class BatchJobLauncher implements CommandLineRunner {
 
     private final JobLauncher jobLauncher;

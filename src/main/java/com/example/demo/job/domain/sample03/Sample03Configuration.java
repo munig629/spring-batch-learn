@@ -4,8 +4,14 @@ import java.nio.charset.StandardCharsets;
 
 import com.example.demo.job.domain.sample03.step.Sample03Processor;
 import com.example.demo.job.domain.sample03.step.Sample03Tasklet;
+import com.example.demo.job.common.BatchConfigurationBase;
+import com.example.demo.job.common.listener.BatchItemWriteListener;
+import com.example.demo.job.common.listener.BatchJobExecutionListener;
+import com.example.demo.job.common.listener.BatchStepExecutionListener;
+import com.example.demo.job.domain.sample02.sql.Sample02DTO;
 import com.example.demo.job.domain.sample03.sql.Sample03DTO;
 
+import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -29,14 +35,9 @@ import org.springframework.core.io.FileSystemResource;
 
 import lombok.RequiredArgsConstructor;
 
-@EnableBatchProcessing
 @Configuration
 @RequiredArgsConstructor
-public class Sample03Configuration {
-
-    private final JobBuilderFactory jobBuilderFactory;
-
-    private final StepBuilderFactory stepBuilderFactory;
+public class Sample03Configuration extends BatchConfigurationBase {
     
     private final Sample03Tasklet sample03Tasklet;
 
@@ -122,6 +123,12 @@ public class Sample03Configuration {
                 .reader(reader)
                 .processor(sample03Processor)
                 .writer(writer)
+                // .listener(stepExecutionListener())
                 .build();
     }
+
+    // @Bean
+	// public BatchStepExecutionListener stepExecutionListener() {
+	// 	return new BatchStepExecutionListener();
+	// }
 }

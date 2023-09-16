@@ -18,6 +18,9 @@ public class Sample03Processor extends BatchItemProcessorBase<Sample03DTO, Sampl
             item.setName(item.getName() + "◆");
         }
 
+        // 囲み文字を設定
+        item.setName("\"" + item.getName() + "\"");
+
         // // 9件目の処理でエラーを発生させてみる
         // if(item.getId() == 9){
         //     throw new Exception();
